@@ -55,7 +55,7 @@ Winter Games представляет из себя игровое меню с �
   + `settings.py` - хронятся постоянные занчения ; 
   + `highscore.txt` - сохраняется рекорд.
 
- **src/source/PenguinJump** -> `game.py`, **data** -> **img**, **font**, **sfx**, **scripts** -> `constants.py`, `draw.py`, `highscores.py`, `scores.dat`, `spawners.py`, `sprites.py` :
+ **src/source/SnowRide** -> `game.py`, **data** -> **img**, **font**, **sfx**, **scripts** -> `constants.py`, `draw.py`, `highscores.py`, `scores.dat`, `spawners.py`, `sprites.py` :
   + запуск через `game.py`, который реализован на функциях. После *def snowrider* запускается *def main* в котором соедржится игра;
   + **data**/**scripts**/`constants.py` - хранятся постоянные значения ;
   + **data**/**scripts**/`draw.py` - визуализация меню ;
