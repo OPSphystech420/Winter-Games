@@ -62,6 +62,6 @@ def draw_particles(particles_list):
     for p in particles_list:
         p.draw()
 
-        if p.x < -p.size or p.x > p.win_res["W"] + p.size or p.y < -p.size or p.y > p.win_res["H"] + p.size:
+        if p.x < -p.size or p.x > p.win_res["WEIGHT"] + p.size or p.y < -p.size or p.y > p.win_res["HEIGHT"] + p.size:
             particles_list.remove(p)
             del p
