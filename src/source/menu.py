@@ -1,5 +1,9 @@
 from source.PenguinJump.main import *
 from source.SnowRider.game import *
+import json
+
+with open('./source/guide.json') as text:
+    data = json.load(text)
 
 
 class Menu:
@@ -91,47 +95,15 @@ class GuideMenu(Menu):
                 self.run_display = False
             self.game.display.fill(self.game.BLUE)
             self.game.draw_text('Guide', 20, self.game.WEIGHT / 2, self.game.HEIGHT / 7 - 50)
-            self.game.draw_text('SnowRide :', 13, self.game.WEIGHT / 6, self.game.HEIGHT / 5 - 20)
-            self.game.draw_text('| What is this game?                                                     |', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5)
-            self.game.draw_text('| SnowRide is a side--scroller game where you try to dodge obstacles and |', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 10)
-            self.game.draw_text('| try to survive as long as possible. It is set in the mountains where an|', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 20)
-            self.game.draw_text('| avalanche is hurtling towards you, launching debris and generating     |', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 30)
-            self.game.draw_text('| unstable tectonics! try to get points by narrowly missing them!        |', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 40)
-            self.game.draw_text('| Controls :                                                             |', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 60)
-            self.game.draw_text('| A - Move Left (Exit to Menu, Start)                                    |', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 70)
-            self.game.draw_text('| D - Move Right (Retry, Quit)                                           |', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 80)
-            self.game.draw_text('--------------------------------------------------------------------------', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 88)
-            self.game.draw_text('PenguinJump :', 13, self.game.WEIGHT / 6, self.game.HEIGHT / 10 + 190)
-            self.game.draw_text('| What is this game?                                                     |', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 140)
-            self.game.draw_text('| Jump and get the cute penguin, as high as you can. To survive, bounce  |', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 150)
-            self.game.draw_text('| on animals, and catch randomly spawning balloons to get high score,    |', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 160)
-            self.game.draw_text('| (with increase of HS, increases chance not to find a balloon).         |', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 170)
-            self.game.draw_text('| Controls :                                                             |', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 190)
-            self.game.draw_text('| WASD -- is default. You can change to ArrowKey in Options              |', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 200)
-            self.game.draw_text('| Enter -- select, Backspace -- return, ESC -- Quit                      |', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 210)
-            self.game.draw_text('| As well you can change volume in Options and make full screen with F5  |', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 220)
-            self.game.draw_text('--------------------------------------------------------------------------', 8,
-                                self.game.WEIGHT / 2, self.game.HEIGHT / 5 + 228)
+            c = 0
+            for x in range(len(data)):
+                self.game.draw_text(data[x], 8, self.game.WEIGHT / 2, self.game.HEIGHT / 5 + c)
+                c += 15
+
             self.game.draw_text('Press ESC - to quit the Menu', 10, self.game.WEIGHT / 2, self.game.HEIGHT - 200)
             self.game.draw_text('Press Enter - to return', 10, self.game.WEIGHT / 2, self.game.HEIGHT - 220)
             self.game.draw_text('powered with pygame.', 13, self.game.WEIGHT / 2, self.game.HEIGHT / 2 + 300)
             self.game.draw_text('(c) 2022 Winter Games. All rights reserved.', 13, self.game.WEIGHT / 2,
                                 self.game.HEIGHT / 2 + 320)
             self.blit_screen()
+            
