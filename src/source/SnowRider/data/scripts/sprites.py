@@ -32,7 +32,7 @@ class Player(pygame.sprite.Sprite):
             if not self.has_collided:
                 self.speedx = 0
                 self.image = self.image_orig
-
+                
                 # Get pressed key
                 pressed = pygame.key.get_pressed()
 
@@ -322,3 +322,4 @@ class Bouncy:
 
         self.x += self.speedx
         self.y += self.speedy
+        
