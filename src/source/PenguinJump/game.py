@@ -1,7 +1,7 @@
 import os
 from os import path, environ
-
 from source.PenguinJump.Sprites import *
+from source.PenguinJump.JsonInit import *
 
 
 def truncate(n, decimals=0):
@@ -10,8 +10,10 @@ def truncate(n, decimals=0):
 
 
 class Game1:
+
     def __init__(self):
-        # Initialize game window
+        data = Config.load_json('./source/PenguinJump/settings.json')
+         # Initialize game window
         self.all_Sprites = None
         self.dir = None
         self.highscore = None
@@ -52,15 +54,15 @@ class Game1:
         pygame.mixer.init(frequency=44100)
         self.monitor_size = [pygame.display.Info().current_w, pygame.display.Info().current_h]
         environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (
-            self.monitor_size[0] / 2 - SCREEN_WIDTH / 2, self.monitor_size[1] / 2 - SCREEN_HEIGHT / 2)
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+            self.monitor_size[0] / 2 - data.SCREEN_WIDTH / 2, self.monitor_size[1] / 2 - data.SCREEN_HEIGHT / 2)
+        self.screen = pygame.display.set_mode((data.SCREEN_WIDTH, data.SCREEN_HEIGHT))
         self.full_screen = False
-        pygame.display.set_caption(TITLE)
+        pygame.display.set_caption(data.TITLE)
         self.VOLUME_SETTING = 100
         self.volume_mult = 1
         self.clock = pygame.time.Clock()
         self.running = True
-        self.font_name = FONT
+        self.FONT_NAME = data.FONT
 
         # Load saved data
         self.load_data()
@@ -95,7 +97,7 @@ class Game1:
         self.player = Player(self)  # Reference all the games variables to the player as well
         self.all_Sprites.add(self.player)
 
-        for plat in platform_list:
+        for plat in data.platform_list:
             p = Platform(self, plat[0], plat[0], self.platforms, self.all_Sprites)  # * explodes the list
             self.last_spawn = p
 
@@ -108,7 +110,7 @@ class Game1:
         pygame.mixer.music.play(loops=-1)  # Start the music loop
         self.playing = True
         while self.playing:
-            self.clock.tick(FPS)
+            self.clock.tick(data.FPS)
             self.events()
             self.update()
             self.draw()
@@ -146,9 +148,9 @@ class Game1:
                 if event.key == pygame.K_F5:
                     self.full_screen = not self.full_screen
                     if self.full_screen:
-                        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
+                        self.screen = pygame.display.set_mode((data.SCREEN_WIDTH, data.SCREEN_HEIGHT), pygame.FULLSCREEN)
                     else:
-                        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                        self.screen = pygame.display.set_mode((data.SCREEN_WIDTH, data.SCREEN_HEIGHT))
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_SPACE and not self.player.bouncing and not self.player.plummeting \
                         and not self.player.stun and not self.player.got_balloon:
@@ -177,10 +179,10 @@ class Game1:
                     if event.key == pygame.K_F5:
                         self.full_screen = not self.full_screen
                         if self.full_screen:
-                            self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
+                            self.screen = pygame.display.set_mode((data.SCREEN_WIDTH, data.SCREEN_HEIGHT), pygame.FULLSCREEN)
                         else:
-                            self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-            self.draw_text("PAUSED", 24, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+                            self.screen = pygame.display.set_mode((data.SCREEN_WIDTH, data.SCREEN_HEIGHT))
+            self.draw_text("PAUSED", 24, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 2)
             pygame.display.flip()
 
     def draw(self):
@@ -191,7 +193,7 @@ class Game1:
         self.snoweffect()
         self.all_Sprites.draw(self.screen)
         self.screen.blit(self.player.image, self.player.rect)  # always draw the player last so they aren't overshadowed
-        self.draw_text(str(self.score), 22, white, SCREEN_WIDTH / 2, 15)
+        self.draw_text(str(self.score), 22, data.white, data.SCREEN_WIDTH / 2, 15)
         pygame.display.flip()
 
     def increase_difficulty(self):
@@ -205,7 +207,7 @@ class Game1:
             self.player.plummeting = True
             self.falling_sound.play()
 
-        if self.player.rect.top > SCREEN_HEIGHT:  # If the top of the player hits the bottom screen, its game over
+        if self.player.rect.top > data.SCREEN_HEIGHT:  # If the top of the player hits the bottom screen, its game over
             self.falling_sound.stop()
             self.player.kill()
             for sprite in self.all_Sprites:
@@ -273,14 +275,14 @@ class Game1:
 
     # Checks if the camera needs to scroll up
     def scroll_up(self):
-        if self.player.rect.top <= SCREEN_HEIGHT * .35:
+        if self.player.rect.top <= data.SCREEN_HEIGHT * .35:
             self.player.pos.y += max(abs(self.player.velocity.y), 5)  # Move the player's position
             self.spawn_y += max(abs(self.player.velocity.y), 5)
             self.add_score()
             for plat in self.platforms:
                 plat.rect.y += max(abs(self.player.velocity.y),
                                    5)  # Platforms should move at the same speed as the player
-                if plat.rect.top >= SCREEN_HEIGHT:  # If the platform goes offscreen, delete it
+                if plat.rect.top >= data.SCREEN_HEIGHT:  # If the platform goes offscreen, delete it
                     if plat.hasSeal:
                         plat.seal.kill()
                     if plat.hasWalrus:
@@ -292,23 +294,23 @@ class Game1:
             for enemy in self.enemies:
                 enemy.rect.y += max(abs(self.player.velocity.y),
                                     5)  # Platforms should move at the same speed as the player
-                if enemy.rect.top >= SCREEN_HEIGHT:  # and not type(enemy).__name__ =='orca':  # If the platform goes
+                if enemy.rect.top >= data.SCREEN_HEIGHT:  # and not type(enemy).__name__ =='orca':  # If the platform goes
                     # offscreen, delete it
                     enemy.kill()
                     # self.score += 10
             for object in self.objects:
                 object.rect.y += max(abs(self.player.velocity.y),
                                      5)  # Platforms should move at the same speed as the player
-                if object.rect.top >= SCREEN_HEIGHT:  # If the platform goes offscreen, delete it
+                if object.rect.top >= data.SCREEN_HEIGHT:  # If the platform goes offscreen, delete it
                     object.kill()
 
     # Checks if the camera needs to scroll down
     def scroll_down(self):
-        if self.player.rect.bottom >= SCREEN_HEIGHT * 3 / 4:
+        if self.player.rect.bottom >= data.SCREEN_HEIGHT * 3 / 4:
             self.player.pos.y -= abs(self.player.velocity.y)
             for plat in self.platforms:
                 plat.rect.y -= abs(self.player.velocity.y)
-                if plat.rect.y < -SCREEN_HEIGHT / 2:
+                if plat.rect.y < -data.SCREEN_HEIGHT / 2:
                     plat.kill()
             for enemy in self.enemies:
                 enemy.rect.y -= abs(self.player.velocity.y)
@@ -327,13 +329,13 @@ class Game1:
         if self.last_spawn.rect.y > 0:
             if self.spawn_y > self.jump_range:
                 self.spawn_y = 0
-                self.last_spawn = Platform(self, random.randrange(0, SCREEN_WIDTH - width),
+                self.last_spawn = Platform(self, random.randrange(0, data.SCREEN_WIDTH - width),
                                            random.randrange(-130, -100), self.platforms,
                                            self.all_Sprites)  # Spawn above the window
             elif self.spawn_y > 20:
                 if random.randint(1, self.plat_chance) == 1:
                     self.spawn_y = 0
-                    Platform(self, random.randrange(0, SCREEN_WIDTH - width),
+                    Platform(self, random.randrange(0, data.SCREEN_WIDTH - width),
                              random.randrange(-130, -100), self.platforms, self.all_Sprites)  # Spawn above the window
 
     def seagull_spawn(self):
@@ -345,7 +347,7 @@ class Game1:
                 Balloon(self)
 
     def draw_text(self, text, size, color, x, y):
-        font = pygame.font.Font(self.font_name, size)
+        font = pygame.font.Font(self.FONT_NAME, size)
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
         text_rect.midtop = (x, y)
@@ -360,16 +362,16 @@ class Game1:
             for star in self.stars:
                 star.draw_star()
             self.select_cursor.draw_cursor()
-            self.draw_text(TITLE, 48, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4 + 20)
-            # self.draw_text("A and D to move, Space to Jump", 18, white, SCREEN_WIDTH/2, SCREEN_HEIGHT/2 )
-            self.draw_text("START", 15, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT * 3 / 4)
-            self.draw_text("OPTIONS", 15, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT * 3 / 4 + 30)
-            self.draw_text("powered by pygame.", 8, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT * 3 / 4 + 120)
+            self.draw_text(data.TITLE, 48, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 4 + 20)
+            # self.draw_text("A and D to move, Space to Jump", 18, data.white, data.SCREEN_WIDTH/2, data.SCREEN_HEIGHT/2 )
+            self.draw_text("START", 15, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT * 3 / 4)
+            self.draw_text("OPTIONS", 15, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT * 3 / 4 + 30)
+            self.draw_text("powered by pygame.", 8, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT * 3 / 4 + 120)
             self.draw_text("Music Created with BeepBox. Sound Effects Created with Bfxr. Art Created with "
-                           "Texturepacker.", 6, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT * 3 / 4 + 140)
+                           "Texturepacker.", 6, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT * 3 / 4 + 140)
             self.draw_text("(c) 2022 PenguinJump. All rights reserved.",
-                           8, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT * 3 / 4 + 130)
-            self.draw_text("High Score: " + str(self.highscore), 15, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4 + 105)
+                           8, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT * 3 / 4 + 130)
+            self.draw_text("High Score: " + str(self.highscore), 15, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 4 + 105)
 
             pygame.display.flip()  # Print the contents to the screen
             waiting = self.wait_for_key("start")
@@ -391,9 +393,9 @@ class Game1:
                 if event.key == pygame.K_F5:
                     self.full_screen = not self.full_screen
                     if self.full_screen:
-                        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
+                        self.screen = pygame.display.set_mode((data.SCREEN_WIDTH, data.SCREEN_HEIGHT), pygame.FULLSCREEN)
                     else:
-                        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                        self.screen = pygame.display.set_mode((data.SCREEN_WIDTH, data.SCREEN_HEIGHT))
                 if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
                     if mode == "options":
                         self.options_select()
@@ -408,21 +410,21 @@ class Game1:
     def update_high_score(self):
         if self.score > self.highscore:
             self.highscore = self.score
-            self.draw_text("New High Score!", 15, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 40)
-            with open(path.join(self.dir, HS_FILE), 'w') as file:
+            self.draw_text("New High Score!", 15, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 2 + 40)
+            with open(path.join(self.dir, data.HS_FILE), 'w') as file:
                 file.write(str(self.highscore))
         else:
-            self.draw_text("High Score: " + str(self.highscore), 15, white, SCREEN_WIDTH / 2, 15)
+            self.draw_text("High Score: " + str(self.highscore), 15, data.white, data.SCREEN_WIDTH / 2, 15)
 
     def load_data(self):
         self.dir = path.dirname(path.abspath("game.py"))  # Gets the directory name of the game.py file
-        img_dir = path.join(self.dir, "source\\PenguinJump\\Sprites")
-        if os.path.exists(path.join(self.dir, HS_FILE)):
+        img_dir = path.join(self.dir, "source/PenguinJump/Sprites")
+        if os.path.exists(path.join(self.dir, data.HS_FILE)):
             mode = 'r+'
         else:
             mode = 'a+'
         try:
-            with open(path.join(self.dir, HS_FILE),
+            with open(path.join(self.dir, data.HS_FILE),
                       mode) as file:  # open highscore file, w allows us to write the file and creates it if doesnt
                 # exist
                 # Read the highscore only if it exists
@@ -431,7 +433,7 @@ class Game1:
             self.highscore = 0  # If file isnt read, use 0
 
         # Load the spritesheet
-        self.spritesheet = Spritesheet(path.join(img_dir, SPRITESHEET))
+        self.spritesheet = Spritesheet(path.join(img_dir, data.SPRITESHEET))
 
         # Load the snow
         self.initialize_snow()
@@ -472,15 +474,15 @@ class Game1:
     def snoweffect(self):
         for s in self.snowflakes:
             s.y += 1.5
-            if s.y > SCREEN_HEIGHT:
-                s.x = random.randrange(0, SCREEN_WIDTH)
+            if s.y > data.SCREEN_HEIGHT:
+                s.x = random.randrange(0, data.SCREEN_WIDTH)
                 s.y = random.randrange(-50, -10)
             s.draw_snow()
 
     def start_menu_stars(self):
         self.stars = []
         for i in range(100):
-            self.stars.append(Star(self, random.randrange(0, SCREEN_WIDTH), random.randrange(100, 390)))
+            self.stars.append(Star(self, random.randrange(0, data.SCREEN_WIDTH), random.randrange(100, 390)))
         for i in range(30):
             self.stars.append(Star(self, random.randrange(200, 400), random.randrange(10, 150)))
 
@@ -491,20 +493,20 @@ class Game1:
         self.select_cursor = Cursor(self)
         self.select_cursor.selected = "VOLUME"
         self.select_cursor.offset = -125
-        self.select_cursor.x = SCREEN_WIDTH / 2 + self.select_cursor.offset
-        self.select_cursor.y = SCREEN_HEIGHT / 2
+        self.select_cursor.x = data.SCREEN_WIDTH / 2 + self.select_cursor.offset
+        self.select_cursor.y = data.SCREEN_HEIGHT / 2
         while waiting:
             if not self.running:
                 return
 
-            self.screen.fill(black)
+            self.screen.fill(data.black)
             self.snoweffect()
             self.select_cursor.draw_cursor()
-            self.draw_text("OPTIONS", 48, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4)
-            self.draw_text("VOLUME", 18, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-            self.draw_text("CONTROLS", 18, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 30)
-            self.draw_text("Press Backspace to return", 12, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT - 80)
-            self.draw_text("Press F5 to enter full_screen Mode", 12, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT - 100)
+            self.draw_text("OPTIONS", 48, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 4)
+            self.draw_text("VOLUME", 18, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 2)
+            self.draw_text("CONTROLS", 18, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 2 + 30)
+            self.draw_text("Press Backspace to return", 12, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT - 80)
+            self.draw_text("Press F5 to enter full_screen Mode", 12, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT - 100)
             pygame.display.flip()  # Print the contents to the screen
             waiting = self.wait_for_key("options")
 
@@ -520,16 +522,16 @@ class Game1:
     def volume_control(self):
         selected = False
         self.option_cursor.selected = "LOWER"
-        self.option_cursor.x = SCREEN_WIDTH / 4 + self.option_cursor.offset
-        self.option_cursor.y = SCREEN_HEIGHT / 2 + 80
+        self.option_cursor.x = data.SCREEN_WIDTH / 4 + self.option_cursor.offset
+        self.option_cursor.y = data.SCREEN_HEIGHT / 2 + 80
         while not selected:
-            self.screen.fill(black)
+            self.screen.fill(data.black)
             self.snoweffect()
-            self.draw_text("OPTIONS", 48, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4)
-            self.draw_text("VOLUME", 18, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-            self.draw_text("-", 18, white, SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 + 80)
-            self.draw_text("+", 18, white, SCREEN_WIDTH * 3 / 4, SCREEN_HEIGHT / 2 + 80)
-            self.draw_text(str(self.VOLUME_SETTING) + '%', 18, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 80)
+            self.draw_text("OPTIONS", 48, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 4)
+            self.draw_text("VOLUME", 18, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 2)
+            self.draw_text("-", 18, data.white, data.SCREEN_WIDTH / 4, data.SCREEN_HEIGHT / 2 + 80)
+            self.draw_text("+", 18, data.white, data.SCREEN_WIDTH * 3 / 4, data.SCREEN_HEIGHT / 2 + 80)
+            self.draw_text(str(self.VOLUME_SETTING) + '%', 18, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 2 + 80)
             self.option_cursor.draw_cursor()
             selected = self.option_cursor.control_option_sound()
             self.adjust_sounds()
@@ -551,15 +553,15 @@ class Game1:
     def change_controls(self):
         selected = False
         self.option_cursor.selected = "ASDW"
-        self.option_cursor.x = SCREEN_WIDTH / 4 + self.option_cursor.offset
-        self.option_cursor.y = SCREEN_HEIGHT / 2 + 80
+        self.option_cursor.x = data.SCREEN_WIDTH / 4 + self.option_cursor.offset
+        self.option_cursor.y = data.SCREEN_HEIGHT / 2 + 80
         while not selected:
-            self.screen.fill(black)
+            self.screen.fill(data.black)
             self.snoweffect()
-            self.draw_text("OPTIONS", 48, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4)
-            self.draw_text("CONTROLS", 18, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 30)
-            self.draw_text("ASDW", 18, white, SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 + 80)
-            self.draw_text("Arrow Keys", 18, white, SCREEN_WIDTH * 3 / 4, SCREEN_HEIGHT / 2 + 80)
+            self.draw_text("OPTIONS", 48, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 4)
+            self.draw_text("CONTROLS", 18, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 2 + 30)
+            self.draw_text("ASDW", 18, data.white, data.SCREEN_WIDTH / 4, data.SCREEN_HEIGHT / 2 + 80)
+            self.draw_text("Arrow Keys", 18, data.white, data.SCREEN_WIDTH * 3 / 4, data.SCREEN_HEIGHT / 2 + 80)
             self.option_cursor.draw_cursor()
             selected = self.option_cursor.control_option_cursor()
             pygame.display.flip()  # Print the contents to the screen
@@ -573,19 +575,19 @@ class Game1:
         self.gameOver_cursors = Cursor(self)
         selected = False
         self.gameOver_cursors.offset = -175
-        self.gameOver_cursors.x = SCREEN_WIDTH / 2 + self.gameOver_cursors.offset
-        self.gameOver_cursors.y = SCREEN_HEIGHT / 2
+        self.gameOver_cursors.x = data.SCREEN_WIDTH / 2 + self.gameOver_cursors.offset
+        self.gameOver_cursors.y = data.SCREEN_HEIGHT / 2
 
         while not selected:
 
             if not self.running:
                 return
-            self.screen.fill(black)
+            self.screen.fill(data.black)
             self.snoweffect()
-            self.draw_text("GAME OVER", 48, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4)
-            self.draw_text("Score:" + str(self.score), 22, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT * 3 / 4)
-            self.draw_text("PLAY AGAIN", 18, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-            self.draw_text("RETURN TO MENU", 18, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 30)
+            self.draw_text("GAME OVER", 48, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 4)
+            self.draw_text("Score:" + str(self.score), 22, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT * 3 / 4)
+            self.draw_text("PLAY AGAIN", 18, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 2)
+            self.draw_text("RETURN TO MENU", 18, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 2 + 30)
             self.gameOver_cursors.draw_cursor()
             pygame.display.flip()
             selected = self.gameOver_cursors.gameover_cursor()
@@ -599,8 +601,8 @@ class Game1:
     def logo_screen(self):
         now = pygame.time.get_ticks()
         colors = 0
-        self.shootingStar = ShootingStar(self, SCREEN_WIDTH, -60)
-        self.shootingStar2 = ShootingStar(self, SCREEN_WIDTH + 50, -60)
+        self.shootingStar = ShootingStar(self, data.SCREEN_WIDTH, -60)
+        self.shootingStar2 = ShootingStar(self, data.SCREEN_WIDTH + 50, -60)
         while now < 6750:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -614,20 +616,20 @@ class Game1:
                     if event.key == pygame.K_F5:
                         self.full_screen = not self.full_screen
                         if self.full_screen:
-                            self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
+                            self.screen = pygame.display.set_mode((data.SCREEN_WIDTH, data.SCREEN_HEIGHT), pygame.FULLSCREEN)
                         else:
-                            self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                            self.screen = pygame.display.set_mode((data.SCREEN_WIDTH, data.SCREEN_HEIGHT))
 
-            self.screen.fill(black)
+            self.screen.fill(data.black)
             if now > 1000:
                 self.shootingStar.move()
                 self.shootingStar.draw()
             if now > 1500:
                 self.shootingStar2.move()
                 self.shootingStar2.draw()
-            self.draw_text("PenguinJump", 18, (colors, colors, colors), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-            self.draw_text("(c) 2022 All Rights Reserved", 10, (colors, colors, colors), SCREEN_WIDTH / 2,
-                           SCREEN_HEIGHT / 2 + 30)
+            self.draw_text("PenguinJump", 18, (colors, colors, colors), data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 2)
+            self.draw_text("(c) 2022 All Rights Reserved", 10, (colors, colors, colors), data.SCREEN_WIDTH / 2,
+                           data.SCREEN_HEIGHT / 2 + 30)
             if (colors <= 255) and now < 4000:
                 colors += .2
             elif now > 3000:
@@ -646,14 +648,14 @@ class Game1:
         now = pygame.time.get_ticks()
         self.last_update = pygame.time.get_ticks()
         while now - self.last_update < 2700:
-            self.clock.tick(FPS)
+            self.clock.tick(data.FPS)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
                     return
             now = pygame.time.get_ticks()
-            self.screen.fill(black)
+            self.screen.fill(data.black)
             self.snoweffect()
-            self.draw_text("How High Can You Fly?", 24, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50)
-            self.draw_text("High Score: " + str(self.highscore), 15, white, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 30)
+            self.draw_text("How High Can You Fly?", 24, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 2 - 50)
+            self.draw_text("High Score: " + str(self.highscore), 15, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 2 + 30)
             pygame.display.flip()
