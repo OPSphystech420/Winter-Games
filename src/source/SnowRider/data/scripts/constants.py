@@ -47,3 +47,4 @@ MAX_THREAT_ENEMIES["debris"] = 5
 # Movement =====================================================================
 SPRITE_MOVESPEED = 8
 PARALLAX_MOVESPEED = 10
+        
