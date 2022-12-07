@@ -1,0 +1,29 @@
+{
+"TITLE": "PenguinJump",
+"SCREEN_WIDTH": 600,
+"SCREEN_HEIGHT": 600,
+"FPS": 60,
+"FONT": "source/PenguinJump/font/PressStart2P-vaV7.ttf",
+"HS_FILE": "source/PenguinJump/highscore.txt",
+"SPRITESHEET": "articSpritesv.png",
+
+
+"white": [255, 255, 255],
+"black": [0, 0, 0],
+"red": [255, 0, 0],
+"green": [0, 255, 0],
+"blue":[0, 0, 255],
+
+"platform_list": [
+        [0, 560],
+        [200, 450],
+        [300, 300],
+        [250, 120],
+        [300, -20]
+    ],
+
+"player_acc": 0.7,
+"friction": -0.12,
+"gravity": 0.8,
+"player_jump": -18
+}
