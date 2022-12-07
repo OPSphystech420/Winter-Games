@@ -59,3 +59,4 @@ def spawn_particles(window, x, y, amnt, colors, launch_type, game_font):
             particles_coins.append(p)
         else:
             particles.append(p)
+            
