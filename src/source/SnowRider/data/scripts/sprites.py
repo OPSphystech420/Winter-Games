@@ -14,33 +14,33 @@ class Player(pygame.sprite.Sprite):
         self.image = images
         self.image_orig = images
         self.rect = self.image.get_rect()
-        self.rect.centerx = win_res["W"] / 2
-        self.rect.bottom = win_res["H"] + 64
-        self.spawn_y = win_res["H"] * 0.9
+        self.rect.centerx = win_res["WEIGHT"] / 2
+        self.rect.bottom = win_res["HEIGHT"] + 64
+        self.spawn_y = win_res["HEIGHT"] * 0.9
         self.spawned = False
         self.direction = "forward"
         self.has_collided = False
         # For speed
-        self.spdx = 0
+        self.speedx = 0
         self.movspd = 6
-        self.spdy = 0
+        self.speedy = 0
         # For collision
         self.radius = 16
 
     def update(self):
         if self.spawned:
             if not self.has_collided:
-                self.spdx = 0
+                self.speedx = 0
                 self.image = self.image_orig
 
                 # Get pressed key
                 pressed = pygame.key.get_pressed()
 
                 if pressed[pygame.K_a]:
-                    self.spdx = -self.movspd
+                    self.speedx = -self.movspd
                     self.rotate_img(40)
                 elif pressed[pygame.K_d]:
-                    self.spdx = self.movspd
+                    self.speedx = self.movspd
                     self.rotate_img(-40)
 
                 # Draw radius
@@ -48,20 +48,20 @@ class Player(pygame.sprite.Sprite):
                 # pygame.draw.circle(self.image, (255,0,0), temp_rect.center, self.radius)
 
                 # Move sprite on the x-axis
-                self.rect.x += self.spdx
+                self.rect.x += self.speedx
 
                 self.check_oob()
             else:
-                self.rect.y += self.spdy
+                self.rect.y += self.speedy
 
     def check_oob(self):
         # Check if sprite is out of bounds
         if self.rect.left < 0:
             self.rect.left = 0
-            self.spdx = 0
-        elif self.rect.right > win_res["W"]:
-            self.rect.right = win_res["W"]
-            self.spdx = 0
+            self.speedx = 0
+        elif self.rect.right > win_res["WEIGHT"]:
+            self.rect.right = win_res["WEIGHT"]
+            self.speedx = 0
 
     def rotate_img(self, angle):
         orig_rect = self.image.get_rect()
@@ -78,9 +78,9 @@ class Obstacle(pygame.sprite.Sprite):
         self.palette = list()
         self.image = self.roll_img(images)
         self.rect = self.image.get_rect()
-        self.rect.x = random.randrange(0, win_res["W"] - 64)
+        self.rect.x = random.randrange(0, win_res["WEIGHT"] - 64)
         self.rect.y = random.randrange(-1028, -128)
-        self.spdy = SPRITE_MOVESPEED
+        self.speedy = SPRITE_MOVESPEED
         # For collision
         self.radius = 28
 
@@ -89,9 +89,9 @@ class Obstacle(pygame.sprite.Sprite):
         # temp_rect = self.image.get_rect()
         # pygame.draw.circle(self.image, (255,0,0), temp_rect.center, self.radius)
 
-        self.rect.y += self.spdy
+        self.rect.y += self.speedy
 
-        if self.rect.top > win_res["H"]:
+        if self.rect.top > win_res["HEIGHT"]:
             self.kill()
 
     def roll_img(self, images):
@@ -115,9 +115,9 @@ class Fracture(pygame.sprite.Sprite):
         self.images = images[self.variant]
         self.image = self.images[0]
         self.rect = self.image.get_rect()
-        self.rect.x = random.randrange(-32, win_res["W"] - 64)
+        self.rect.x = random.randrange(-32, win_res["WEIGHT"] - 64)
         self.rect.y = random.randrange(-512, -128)
-        self.spdy = SPRITE_MOVESPEED
+        self.speedy = SPRITE_MOVESPEED
         self.fracture_timer = pygame.time.get_ticks()
         self.fracture_delay = random.randrange(250, 500)
         self.fractured = False
@@ -134,13 +134,13 @@ class Fracture(pygame.sprite.Sprite):
         # temp_rect = self.image.get_rect()
         # pygame.draw.circle(self.image, (255,0,0), temp_rect.center, self.radius)
 
-        self.rect.y += self.spdy
+        self.rect.y += self.speedy
 
         now = pygame.time.get_ticks()
         if now - self.fracture_timer > self.fracture_delay:
             self.animate()
 
-        if self.rect.top > win_res["H"]:
+        if self.rect.top > win_res["HEIGHT"]:
             self.kill()
 
     def animate(self):
@@ -166,17 +166,17 @@ class Debris(pygame.sprite.Sprite):
         self.img_roll = random.randrange(0, len(images))
         self.image = pygame.transform.scale(self.images["normal"][self.img_roll], (size, size))
         self.rect = self.image.get_rect()
-        self.rect.centerx = random.randrange(64, win_res["W"] - 64)
-        self.rect.centery = win_res["H"] * 1.2
+        self.rect.centerx = random.randrange(64, win_res["WEIGHT"] - 64)
+        self.rect.centery = win_res["HEIGHT"] * 1.2
         self.window = window
         self.impacted = False
         self.img_changed = False
-        self.spdy = SPRITE_MOVESPEED
-        self.spdx = self.calc_spdx()
+        self.speedy = SPRITE_MOVESPEED
+        self.speedx = self.calc_speedx()
         self.shaked = False  # Bool if it has shaked the screen. See game loop.
         self.is_above_player = False
         # The point at which the object will stop moving on the y-axis
-        self.max_disty = random.randrange(96, win_res["H"] * 0.3)
+        self.max_disty = random.randrange(96, win_res["HEIGHT"] * 0.3)
         # For shrinking
         self.shrink_timer = pygame.time.get_ticks()
         self.shrink_delay = 80
@@ -195,18 +195,18 @@ class Debris(pygame.sprite.Sprite):
             self.impacted = True
 
         if self.impacted:
-            self.rect.y += self.spdy
+            self.rect.y += self.speedy
             if not self.img_changed:
                 self.change_image()
                 self.img_changed = True
                 self.radius = self.image.get_width() // 3
         else:
             self.rect.y -= random.randrange(SPRITE_MOVESPEED + 2, SPRITE_MOVESPEED + 5)
-            self.rect.x += self.spdx
+            self.rect.x += self.speedx
             self.shrink()
 
         # Delete sprite if it goes off screen
-        if self.impacted and self.rect.top > win_res["H"]:
+        if self.impacted and self.rect.top > win_res["HEIGHT"]:
             self.kill()
 
     def shrink(self):
@@ -232,10 +232,10 @@ class Debris(pygame.sprite.Sprite):
         self.rect.centerx = old_x
         self.rect.centery = old_y
 
-    def calc_spdx(self):
-        if self.rect.centerx > win_res["W"] / 2:
+    def calc_speedx(self):
+        if self.rect.centerx > win_res["WEIGHT"] / 2:
             return random.randrange(-7, -1)
-        elif self.rect.centerx < win_res["W"] / 2:
+        elif self.rect.centerx < win_res["WEIGHT"] / 2:
             return random.randrange(1, 7)
         else:
             return random.choice([-2, 2])
@@ -252,36 +252,36 @@ class Particle:
         self.color = random.choice(colors)
         self.launch_type = launch_type
         if self.launch_type == "explosion":
-            self.spdx = random.choice([num for num in range(-8, 8) if num not in [-2, -1, 0, 1, 2]])
-            self.spdy = random.choice([num for num in range(-6, 6) if num not in [-2, -1, 0, 1, 2]])
+            self.speedx = random.choice([num for num in range(-8, 8) if num not in [-2, -1, 0, 1, 2]])
+            self.speedy = random.choice([num for num in range(-6, 6) if num not in [-2, -1, 0, 1, 2]])
             self.size = random.choice([8, 12])
         elif self.launch_type == "trail":
-            self.spdx = 0
-            self.spdy = SPRITE_MOVESPEED
+            self.speedx = 0
+            self.speedy = SPRITE_MOVESPEED
             self.size = 16
             self.y = self.y - 32
         elif self.launch_type == "coins":
-            self.spdx = random.choice([-1, 1])
-            self.spdy = -1
+            self.speedx = random.choice([-1, 1])
+            self.speedy = -1
             self.size = 16
             self.y = self.y + random.randrange(-16, 16)
 
     def draw(self):
-        self.x += self.spdx
-        self.y += self.spdy
+        self.x += self.speedx
+        self.y += self.speedy
         if self.launch_type == "explosion":
-            if self.spdx > 0:
-                self.spdx -= 0.1
-            if self.spdy < self.movspd:
-                self.spdy += 0.1
-            elif self.spdy > self.movspd:
-                self.spdy -= 0.1
+            if self.speedx > 0:
+                self.speedx -= 0.1
+            if self.speedy < self.movspd:
+                self.speedy += 0.1
+            elif self.speedy > self.movspd:
+                self.speedy -= 0.1
             pygame.draw.rect(self.window, self.color, (self.x, self.y, self.size, self.size))
         elif self.launch_type == "trail":
             pygame.draw.rect(self.window, self.color, (self.x - 2, self.y, self.size, self.size))
         elif self.launch_type == "coins":
             draw_text(self.window, f"+8", 32, self.font, self.x, self.y, BLACK, "centered")
-            self.spdy += 0.5
+            self.speedy += 0.5
 
 
 class Shadow:
