@@ -94,15 +94,19 @@ class Obstacle(pygame.sprite.Sprite):
         if self.rect.top > win_res["HEIGHT"]:
             self.kill()
 
-    def roll_img(self, images):
+    def roll_img(self, images): 
+        # is the weight for each image in the list,
+        # [8, 8, 8, 1, 1, 1, 1, 1] = 25% chance of each image being selected (8/32) * 100 = 25%
+        # The function returns a k sized list of population elements chosen with replacement.
+        # If the relative weights or cumulative weights are not specified, the selections are made with equal probability.
         img_list = images
         choices = random.choices(img_list, [8, 8, 8, 1, 1, 1, 1, 1], k=10)
         choice = random.choice(choices)
 
         # Get color information of the surface
-        self.palette.append(choice.get_at((32, 32)))
-        self.palette.append(choice.get_at((42, 42)))
-        self.palette.append(choice.get_at((32, 48)))
+        self.palette.append(choice.get_at((32, 32))) # Top left
+        self.palette.append(choice.get_at((42, 42))) # Top right
+        self.palette.append(choice.get_at((32, 48))) # Bottom left
 
         # Return choice
         return choice
