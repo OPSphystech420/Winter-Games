@@ -70,3 +70,4 @@ class Game:
     def run(self):
         while self.running:
             self.curr_menu.display_menu()
+            
