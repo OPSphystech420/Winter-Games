@@ -53,7 +53,7 @@ def main():
     # Initialize the window ========================================================
 
     os.environ['SDL_VIDEO_CENTERED'] = '1'
-    window = pygame.display.set_mode((win_res["W"], win_res["H"]))
+    window = pygame.display.set_mode((win_res["WEIGHT"], win_res["HEIGHT"]))
     window.get_rect()
     pygame.display.set_caption(TITLE)
 
@@ -121,8 +121,8 @@ def main():
     alert_tectonics_img = load_png("alert_tectonics.png", img_dir, 6)
     alert_debris_img = load_png("alert_debris.png", img_dir, 6)
     alert_rect = alert_forest_img.get_rect()
-    alert_rect.centerx = win_res["W"] / 2
-    alert_rect.y = win_res["H"] * 0.1
+    alert_rect.centerx = win_res["WEIGHT"] / 2
+    alert_rect.y = win_res["HEIGHT"] * 0.1
 
     # Sounds =======================================================================
 
@@ -235,7 +235,7 @@ def main():
                         window.fill(SNOW_WHITE)
                         draw_bouncies(bouncies)
                         window.blit(logo_img,
-                                    ((win_res["W"] / 2) - (logo_img.get_width() / 2) * 1.03, win_res["H"] * 0.3))
+                                    ((win_res["WEIGHT"] / 2) - (logo_img.get_width() / 2) * 1.03, win_res["HEIGHT"] * 0.3))
                         pygame.display.flip()
 
                     if in_logo_alpha < 0:  # If image has almost faded out
@@ -248,9 +248,9 @@ def main():
                     window.fill(SNOW_WHITE)
                     draw_bouncies(bouncies)
                     logo_img.set_alpha(in_logo_alpha)
-                    window.blit(logo_img, ((win_res["W"] / 2) - (logo_img.get_width() / 2) * 1.03, win_res["H"] * 0.3))
-                    draw_text(window, "(c) 2022 SnowRide. All rights reserved.", 14, game_font, win_res["W"] / 2,
-                              win_res["H"] * 0.97, BLACK, "centered")
+                    window.blit(logo_img, ((win_res["WEIGHT"] / 2) - (logo_img.get_width() / 2) * 1.03, win_res["HEIGHT"] * 0.3))
+                    draw_text(window, "(c) 2022 SnowRide. All rights reserved.", 14, game_font, win_res["WEIGHT"] / 2,
+                              win_res["HEIGHT"] * 0.97, BLACK, "centered")
 
                 # Update the window
                 pygame.display.flip()
@@ -293,25 +293,25 @@ def main():
                 # Draw processes =======================================================
                 draw_background(window, background_img, background_rect, background_y)
                 draw_background(window, parallax_img, parallax_rect, parallax_x, "horizontal")
-                window.blit(logo_img, ((win_res["W"] / 2) - (logo_img.get_width() / 2), win_res["H"] * 0.1))
+                window.blit(logo_img, ((win_res["WEIGHT"] / 2) - (logo_img.get_width() / 2), win_res["HEIGHT"] * 0.1))
 
                 if has_faded:
-                    draw_text(window, "[A] Play", 32, game_font, win_res["W"] / 2, win_res["H"] * 0.6, BLACK,
+                    draw_text(window, "[A] Play", 32, game_font, win_res["WEIGHT"] / 2, win_res["HEIGHT"] * 0.6, BLACK,
                               "centered")
-                    draw_text(window, "[D] Exit", 32, game_font, win_res["W"] / 2, win_res["H"] * 0.65, BLACK,
+                    draw_text(window, "[D] Exit", 32, game_font, win_res["WEIGHT"] / 2, win_res["HEIGHT"] * 0.65, BLACK,
                               "centered")
                     if hi_scores == [0]:
-                        draw_text(window, "HS 0", 32, game_font, win_res["W"] / 2, win_res["H"] * 0.72, BLACK,
+                        draw_text(window, "HS 0", 32, game_font, win_res["WEIGHT"] / 2, win_res["HEIGHT"] * 0.72, BLACK,
                                   "centered")
                     else:
-                        draw_text(window, f"HS {hi_scores[0]}", 32, game_font, win_res["W"] / 2, win_res["H"] * 0.72,
+                        draw_text(window, f"HS {hi_scores[0]}", 32, game_font, win_res["WEIGHT"] / 2, win_res["HEIGHT"] * 0.72,
                                   BLACK, "centered")
-                    draw_text(window, "powered by pygame.", 14, game_font, win_res["W"] / 2, win_res["H"] * 0.91, GRAY,
+                    draw_text(window, "powered by pygame.", 14, game_font, win_res["WEIGHT"] / 2, win_res["HEIGHT"] * 0.91, GRAY,
                               "centered")
-                    draw_text(window, "Music from Joshua McLean.", 14, game_font, win_res["W"] / 2, win_res["H"] * 0.94,
+                    draw_text(window, "Music from Joshua McLean.", 14, game_font, win_res["WEIGHT"] / 2, win_res["HEIGHT"] * 0.94,
                               GRAY, "centered")
-                    draw_text(window, "(c) 2022 SnowRide. All rights reserved.", 14, game_font, win_res["W"] / 2,
-                              win_res["H"] * 0.97, GRAY, "centered")
+                    draw_text(window, "(c) 2022 SnowRide. All rights reserved.", 14, game_font, win_res["WEIGHT"] / 2,
+                              win_res["HEIGHT"] * 0.97, GRAY, "centered")
 
                 # Update the window
                 pygame.display.flip()
@@ -501,7 +501,7 @@ def main():
                 # Draw the 'Get Ready Text'
                 now = pygame.time.get_ticks()
                 if now - warmup_timer < warmup_duration * 0.8:
-                    draw_text(window, f"Get Ready!", 48, game_font, win_res["W"] / 2, win_res["H"] * 0.4, BLACK,
+                    draw_text(window, f"Get Ready!", 48, game_font, win_res["WEIGHT"] / 2, win_res["HEIGHT"] * 0.4, BLACK,
                               "centered")
 
                 # Draw the threats prompt
@@ -587,17 +587,17 @@ def main():
                 # Draw texts
                 draw_text(window, f"Score", 24, game_font, 10, 10, BLACK)
                 draw_text(window, f"{math.trunc(score)}", 24, game_font, 10, 50, BLACK)
-                draw_text(window, f"GAME OVER!", 48, game_font, win_res["W"] / 2, win_res["H"] * 0.3, BLACK, "centered")
-                draw_text(window, f"Your score", 24, game_font, win_res["W"] / 2, win_res["H"] * 0.4, BLACK, "centered")
-                draw_text(window, f"{math.trunc(score)}", 28, game_font, win_res["W"] / 2, win_res["H"] * 0.45, BLACK,
+                draw_text(window, f"GAME OVER!", 48, game_font, win_res["WEIGHT"] / 2, win_res["HEIGHT"] * 0.3, BLACK, "centered")
+                draw_text(window, f"Your score", 24, game_font, win_res["WEIGHT"] / 2, win_res["HEIGHT"] * 0.4, BLACK, "centered")
+                draw_text(window, f"{math.trunc(score)}", 28, game_font, win_res["WEIGHT"] / 2, win_res["HEIGHT"] * 0.45, BLACK,
                           "centered")
                 if score > hi_scores[0]:
-                    draw_text(window, "New Hi-Score!", 28, game_font, win_res["W"] / 2, win_res["H"] * 0.50, BLACK,
+                    draw_text(window, "New Hi-Score!", 28, game_font, win_res["WEIGHT"] / 2, win_res["HEIGHT"] * 0.50, BLACK,
                               "centered")
                 if keys_enabled:
-                    draw_text(window, f"[A] Menu", 28, game_font, win_res["W"] / 2, win_res["H"] * 0.55, BLACK,
+                    draw_text(window, f"[A] Menu", 28, game_font, win_res["WEIGHT"] / 2, win_res["HEIGHT"] * 0.55, BLACK,
                               "centered")
-                    draw_text(window, f" [D] Retry", 28, game_font, win_res["W"] / 2, win_res["H"] * 0.6, BLACK,
+                    draw_text(window, f" [D] Retry", 28, game_font, win_res["WEIGHT"] / 2, win_res["HEIGHT"] * 0.6, BLACK,
                               "centered")
                 window.blit(window, next(offset))
 
@@ -613,3 +613,4 @@ def snowrider():
 
     # Quit pygame
     pygame.mixer.quit()
+    
