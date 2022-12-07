@@ -647,3 +647,4 @@ class Spritesheet:
         image.set_colorkey(data.black)
         image.blit(self.spritesheet, (0, 0), (x, y, w, h))
         return image
+    
