@@ -659,3 +659,4 @@ class Game1:
             self.draw_text("How High Can You Fly?", 24, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 2 - 50)
             self.draw_text("High Score: " + str(self.highscore), 15, data.white, data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 2 + 30)
             pygame.display.flip()
+            
