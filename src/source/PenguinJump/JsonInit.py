@@ -33,3 +33,4 @@ class Config(object):
         with open(path, "r") as f:
             result = Config.__load__(json.loads(f.read()))
         return result
+    
