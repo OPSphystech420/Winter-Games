@@ -6,13 +6,13 @@ from source.SnowRider.data.scripts.sprites import Obstacle, Fracture, Debris, Bo
 
 
 def spawn_obstacle(obstacle_imgs, enemies, obstacles, sprites):
-    o = Obstacle(obstacle_imgs)
+    obstacle = Obstacle(obstacle_imgs)
     # Spawn sprite only if it does not overlap with any other sprite
-    hits = pygame.sprite.spritecollide(o, enemies, False)
+    hits = pygame.sprite.spritecollide(obstacle, enemies, False)
     if len(hits) == 0:
-        sprites.add(o)
-        enemies.add(o)
-        obstacles.add(o)
+        sprites.add(obstacle)
+        enemies.add(obstacle)
+        obstacles.add(obstacle)
 
 
 def spawn_fracture(fracture_imgs, fracture_group, enemies, sprites):
@@ -27,23 +27,23 @@ def spawn_fracture(fracture_imgs, fracture_group, enemies, sprites):
 
 def spawn_debris(window, debris_imgs, debris_group, enemies, shadows_list, sprites):
     # Spawn debris
-    d = Debris(debris_imgs, window)
-    hits_debris = pygame.sprite.spritecollide(d, debris_group, False)
-    hits_enemies = pygame.sprite.spritecollide(d, enemies, False)
+    debri = Debris(debris_imgs, window)
+    hits_debris = pygame.sprite.spritecollide(debri, debris_group, False)
+    hits_enemies = pygame.sprite.spritecollide(debri, enemies, False)
 
     if len(hits_debris) == 0 and len(hits_enemies) == 0:
-        sprites.add(d)
-        enemies.add(d)
-        debris_group.add(d)
+        sprites.add(debri)
+        enemies.add(debri)
+        debris_group.add(debri)
 
         # Spawn shadow
-        spawn_shadow(window, d, shadows_list)
+        spawn_shadow(window, debri, shadows_list)
 
 
 def spawn_bouncies(window, bouncies):
     for _ in range(5):
-        b = Bouncy(window)
-        bouncies.append(b)
+        bouncy = Bouncy(window)
+        bouncies.append(bouncy)
 
 
 def spawn_shadow(window, debris, shadows_list):
@@ -53,10 +53,11 @@ def spawn_shadow(window, debris, shadows_list):
 
 def spawn_particles(window, x, y, amnt, colors, launch_type, game_font):
     for _ in range(amnt):
-        p = Particle(window, win_res, random.randrange(x - 10, x), random.randrange(y - 10, y), colors, launch_type,
-                     game_font)
+        particle = Particle(window, win_res, random.randrange(x - 10, x), random.randrange(y - 10, y), colors,
+                            launch_type,
+                            game_font)
         if launch_type == "coins":
-            particles_coins.append(p)
+            particles_coins.append(particle)
         else:
-            particles.append(p)
+            particles.append(particle)
             
