@@ -1,12 +1,11 @@
 # Sprite classes
 import random
-
 import pygame
 
-from source.PenguinJump.settings import *
+from source.PenguinJump.JsonInit import *
 
 vec = pygame.math.Vector2
-
+data = Config.load_json('./source/PenguinJump/settings.json')
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, game):
@@ -18,9 +17,9 @@ class Player(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = game.spritesheet.get_image(372, 23, 30, 40)
         self.rect = self.image.get_rect()
-        self.rect.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+        self.rect.center = (data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 2)
         # Instead of x and y coordinates, we will have a position, velocity, and acceleration vector of (x,y)
-        self.pos = vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+        self.pos = vec(data.SCREEN_WIDTH / 2, data.SCREEN_HEIGHT / 2)
         self.velocity = vec(0, 0)
         self.acc = vec(0, 0)
         self.walking = False
@@ -42,7 +41,7 @@ class Player(pygame.sprite.Sprite):
         hits = pygame.sprite.spritecollide(self, self.game.platforms, False)
         if hits and not self.jumping and not self.got_balloon:
             self.game.jump_sound.play()
-            self.velocity.y = player_jump
+            self.velocity.y = data.player_jump
             self.jumping = True
 
     def ride_balloon(self):
@@ -62,17 +61,17 @@ class Player(pygame.sprite.Sprite):
         self.animate()
         self.last_pos = self.pos.y
         # Get keys pressed from the user
-        self.acc = vec(0, gravity)  # Positive y acceleration for gravity
+        self.acc = vec(0, data.gravity)  # Positive y acceleration for data.gravity
         if self.got_balloon:
             self.ride_balloon()
         keys = pygame.key.get_pressed()
         if keys[self.game.LEFT_KEY]:
-            self.acc.x = -player_acc
+            self.acc.x = -data.player_acc
         if keys[self.game.RIGHT_KEY]:
-            self.acc.x = player_acc
+            self.acc.x = data.player_acc
 
         # apply friction
-        self.acc.x += self.velocity.x * friction  # Multiply velocity times friction to adjust acceleration ( faster 
+        self.acc.x += self.velocity.x * data.friction  # Multiply velocity times friction to adjust acceleration ( faster
         # speed, dre friction) Only in x direction
         # Newton equations of motion
         self.velocity += self.acc
@@ -82,10 +81,10 @@ class Player(pygame.sprite.Sprite):
             self.bouncing = False
 
         # Wrap around the screen
-        if self.pos.x > SCREEN_WIDTH:
+        if self.pos.x > data.SCREEN_WIDTH:
             self.pos.x = 0
         if self.pos.x < 0:
-            self.pos.x = SCREEN_WIDTH
+            self.pos.x = data.SCREEN_WIDTH
 
         # update the player sprite
         self.rect.midbottom = self.pos
@@ -179,7 +178,7 @@ class Seagull(pygame.sprite.Sprite):
         self.load_images()
         self.image = game.spritesheet.get_image(65, 23, 30, 20)
         self.rect = self.image.get_rect()
-        self.rect.centerx = SCREEN_WIDTH / 2
+        self.rect.centerx = data.SCREEN_WIDTH / 2
         self.vx = 3  # random.randrange(3,7)
         self.rect.y = random.randrange(-100, -50)
         self.hit = False
@@ -191,7 +190,7 @@ class Seagull(pygame.sprite.Sprite):
         if self.falling:
             self.rect.y += 4
             return
-        if self.rect.x > SCREEN_WIDTH:
+        if self.rect.x > data.SCREEN_WIDTH:
             self.vx *= -1
         elif self.rect.x < -20:
             self.vx *= -1
@@ -242,7 +241,7 @@ class Seal(pygame.sprite.Sprite):
         self.last_update = 0
         self.load_images()
         self.image = game.spritesheet.get_image(97, 65, 40, 40)
-        self.image.set_colorkey(black)
+        self.image.set_colorkey(data.black)
         self.rect = self.image.get_rect()
         self.rect.centerx = self.plat.rect.centerx
         self.rect.y = self.plat.rect.top - self.rect.height
@@ -315,7 +314,7 @@ class Walrus(pygame.sprite.Sprite):
 
     def update(self):
         self.animate()
-        self.game.draw_text("z", 30, white, self.rect.x, self.rect.y)
+        self.game.draw_text("z", 30, data.white, self.rect.x, self.rect.y)
 
 
 class Orca(pygame.sprite.Sprite):
@@ -330,7 +329,7 @@ class Orca(pygame.sprite.Sprite):
         self.timer = 0
         self.rect = self.image_orca.get_rect()
         self.range = random.randint(0, 205)
-        self.rect.x = SCREEN_WIDTH / 2
+        self.rect.x = data.SCREEN_WIDTH / 2
         self.xvelocity = 2
         self.rect.y = 600
         self.ready = False
@@ -357,7 +356,7 @@ class Orca(pygame.sprite.Sprite):
     def animatey(self):
         now = pygame.time.get_ticks()
         print(self.last_update)
-        if self.rect.y > SCREEN_HEIGHT and self.ready is False:
+        if self.rect.y > data.SCREEN_HEIGHT and self.ready is False:
             print("Updating")
             self.last_update = now
 
@@ -370,7 +369,7 @@ class Orca(pygame.sprite.Sprite):
             return
         if 9500 < now - self.last_update < 10000 and self.ready is True:
             self.rect.y += 2
-            if self.rect.y > SCREEN_HEIGHT:
+            if self.rect.y > data.SCREEN_HEIGHT:
                 self.image = self.image_orca
             return
         elif now - self.last_update > 10000 and self.ready is True:
@@ -381,8 +380,8 @@ class Orca(pygame.sprite.Sprite):
 class Snow:
     def __init__(self, game):
         self.game = game
-        self.x = random.randrange(0, SCREEN_WIDTH)
-        self.y = random.randrange(0, SCREEN_WIDTH)
+        self.x = random.randrange(0, data.SCREEN_WIDTH)
+        self.y = random.randrange(0, data.SCREEN_WIDTH)
 
     def draw_snow(self):
         pygame.draw.rect(self.game.screen, (255, 255, 255), (self.x, self.y, 1, 1))
@@ -468,13 +467,13 @@ class Balloon(pygame.sprite.Sprite):
         else:
             self.image = self.imageLst[1]
         self.rect = self.image.get_rect()
-        self.rect.centerx = random.randrange(50, SCREEN_WIDTH - 50)
+        self.rect.centerx = random.randrange(50, data.SCREEN_WIDTH - 50)
         self.rect.y = random.randrange(-200, -100)
         self.used = False
 
     def update(self):
         self.float()
-        if (self.rect.y > SCREEN_HEIGHT) or self.used:
+        if (self.rect.y > data.SCREEN_HEIGHT) or self.used:
             if self.used:
                 self.game.up_sound.play()
             self.kill()
@@ -484,7 +483,7 @@ class Balloon(pygame.sprite.Sprite):
         self.rect.y += self.vy
         self.rect.x += self.vx
 
-        if self.rect.x > SCREEN_WIDTH or self.rect.x < 0:
+        if self.rect.x > data.SCREEN_WIDTH or self.rect.x < 0:
             self.vx *= -1
             if self.vx > 0:
                 self.image = self.imageLst[0]
@@ -498,8 +497,8 @@ class Cursor:
         self.offset = -75
         self.selected = "PLAY"
         self.image = pygame.image.load("source/PenguinJump/Sprites/cursor.png")
-        self.x = SCREEN_WIDTH / 2 + self.offset
-        self.y = SCREEN_HEIGHT * 3 / 4
+        self.x = data.SCREEN_WIDTH / 2 + self.offset
+        self.y = data.SCREEN_HEIGHT * 3 / 4
         self.selectedGO = "PLAY_AGAIN"
 
     def move_cursor(self, event):
@@ -508,14 +507,14 @@ class Cursor:
                     event.key == self.game.DOWN_KEY and self.selected == "OPTIONS"):
                 self.game.select_sound.play()
                 self.selected = "PLAY"
-                self.x = SCREEN_WIDTH / 2 + self.offset
-                self.y = SCREEN_HEIGHT * 3 / 4
+                self.x = data.SCREEN_WIDTH / 2 + self.offset
+                self.y = data.SCREEN_HEIGHT * 3 / 4
             elif (event.key == self.game.DOWN_KEY and self.selected == "PLAY") or (
                     event.key == self.game.UP_KEY and self.selected == "PLAY"):
                 self.game.select_sound.play()
                 self.selected = "OPTIONS"
-                self.x = SCREEN_WIDTH / 2 + self.offset
-                self.y = SCREEN_HEIGHT * 3 / 4 + 30
+                self.x = data.SCREEN_WIDTH / 2 + self.offset
+                self.y = data.SCREEN_HEIGHT * 3 / 4 + 30
 
     def move_cursor_options(self, event):
         self.offset = -125
@@ -523,13 +522,13 @@ class Cursor:
             if event.key == self.game.DOWN_KEY:
                 self.game.select_sound.play()
                 self.selected = "CONTROLS"
-                self.x = SCREEN_WIDTH / 2 + self.offset
-                self.y = SCREEN_HEIGHT / 2 + 30
+                self.x = data.SCREEN_WIDTH / 2 + self.offset
+                self.y = data.SCREEN_HEIGHT / 2 + 30
             elif event.key == self.game.UP_KEY:
                 self.game.select_sound.play()
                 self.selected = "VOLUME"
-                self.x = SCREEN_WIDTH / 2 + self.offset
-                self.y = SCREEN_HEIGHT / 2
+                self.x = data.SCREEN_WIDTH / 2 + self.offset
+                self.y = data.SCREEN_HEIGHT / 2
 
     def control_option_cursor(self):
         for event in pygame.event.get():
@@ -542,13 +541,13 @@ class Cursor:
                 elif event.key == self.game.LEFT_KEY:
                     self.game.select_sound.play()
                     self.selected = "ASDW"
-                    self.x = SCREEN_WIDTH / 4 + self.offset
-                    self.y = SCREEN_HEIGHT / 2 + 80
+                    self.x = data.SCREEN_WIDTH / 4 + self.offset
+                    self.y = data.SCREEN_HEIGHT / 2 + 80
                 elif event.key == self.game.RIGHT_KEY:
                     self.game.select_sound.play()
                     self.selected = "ARROWS"
-                    self.x = SCREEN_WIDTH * 3 / 4 + self.offset - 50
-                    self.y = SCREEN_HEIGHT / 2 + 80
+                    self.x = data.SCREEN_WIDTH * 3 / 4 + self.offset - 50
+                    self.y = data.SCREEN_HEIGHT / 2 + 80
                 elif (event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER) and self.selected == "ASDW":
                     self.game.press_sound.play()
                     self.game.LEFT_KEY = pygame.K_a
@@ -575,13 +574,13 @@ class Cursor:
                 elif event.key == self.game.LEFT_KEY:
                     self.game.select_sound.play()
                     self.selected = "LOWER"
-                    self.x = SCREEN_WIDTH / 4 + self.offset
-                    self.y = SCREEN_HEIGHT / 2 + 80
+                    self.x = data.SCREEN_WIDTH / 4 + self.offset
+                    self.y = data.SCREEN_HEIGHT / 2 + 80
                 elif event.key == self.game.RIGHT_KEY:
                     self.game.select_sound.play()
                     self.selected = "RAISE"
-                    self.x = SCREEN_WIDTH * 3 / 4 - 50
-                    self.y = SCREEN_HEIGHT / 2 + 80
+                    self.x = data.SCREEN_WIDTH * 3 / 4 - 50
+                    self.y = data.SCREEN_HEIGHT / 2 + 80
                 elif (event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER) and self.selected == "LOWER":
                     if self.game.VOLUME_SETTING > 0:
                         self.game.VOLUME_SETTING -= 10
@@ -613,21 +612,21 @@ class Cursor:
                 if event.key == pygame.K_F5:
                     self.game.fullScreen = not self.game.fullScreen
                     if self.game.fullScreen:
-                        self.game.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
+                        self.game.screen = pygame.display.set_mode((data.SCREEN_WIDTH, data.SCREEN_HEIGHT), pygame.FULLSCREEN)
                     else:
-                        self.game.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                        self.game.screen = pygame.display.set_mode((data.SCREEN_WIDTH, data.SCREEN_HEIGHT))
 
                 if event.key == self.game.DOWN_KEY:
                     self.game.select_sound.play()
                     self.selectedGO = "RETURN"
-                    self.x = SCREEN_WIDTH / 2 + self.offset
-                    self.y = SCREEN_HEIGHT / 2 + 30
+                    self.x = data.SCREEN_WIDTH / 2 + self.offset
+                    self.y = data.SCREEN_HEIGHT / 2 + 30
                     return False
                 elif event.key == self.game.UP_KEY:
                     self.game.select_sound.play()
                     self.selectedGO = "PLAY_AGAIN"
-                    self.x = SCREEN_WIDTH / 2 + self.offset
-                    self.y = SCREEN_HEIGHT / 2
+                    self.x = data.SCREEN_WIDTH / 2 + self.offset
+                    self.y = data.SCREEN_HEIGHT / 2
                     return False
                 elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
                     self.game.press_sound.play()
@@ -645,6 +644,6 @@ class Spritesheet:
     def get_image(self, x, y, w, h):
         # grab the image out of a larger sprite sheet
         image = pygame.Surface((w, h))
-        image.set_colorkey(black)
+        image.set_colorkey(data.black)
         image.blit(self.spritesheet, (0, 0), (x, y, w, h))
         return image
