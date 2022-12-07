@@ -54,15 +54,15 @@ def draw_shadows(shadows_list):
 
 
 def draw_bouncies(bouncies):
-    for b in bouncies:
-        b.draw()
+    for bouncie in bouncies:
+        bouncie.draw()
 
 
 def draw_particles(particles_list):
-    for p in particles_list:
-        p.draw()
+    for particle in particles_list:
+        particle.draw()
 
-        if p.x < -p.size or p.x > p.win_res["WEIGHT"] + p.size or p.y < -p.size or p.y > p.win_res["HEIGHT"] + p.size:
-            particles_list.remove(p)
-            del p
+        if particle.x < -particle.size or particle.x > particle.win_res["WEIGHT"] + particle.size or particle.y < -particle.size or particle.y > particle.win_res["HEIGHT"] + particle.size:
+            particles_list.remove(particle)
+            del particle
             
