@@ -1,0 +1,22 @@
+[
+"SnowRide :",
+"| What is this game?                                                     |",
+"| SnowRide is a side--scroller game where you try to dodge obstacles and |",
+"| try to survive as long as possible. It is set in the mountains where   |",
+"| avalanche is hurtling towards you, launching debris and generating     |",
+"| unstable tectonics! try to get points by narrowly missing them!        |",
+"| Controls :                                                             |",
+"| A - Move Left (Exit to Menu, Start)                                    |",
+"| D - Move Right (Retry, Quit)                                           |",
+"--------------------------------------------------------------------------",
+"PenguinJump :",
+"| What is this game?                                                     |",
+"| Jump and get the cute penguin, as high as you can. To survive, bounce  |",
+"| on animals, and catch randomly spawning balloons to get high score,    |",
+"| (with increase of HS, increases chance not to find a balloon).         |",
+"| Controls :                                                             |",
+"| WASD -- is default. You can change to ArrowKey in Options              |",
+"| Enter -- select, Backspace -- return, ESC -- Quit                      |",
+"| As well you can change volume in Options and make full screen with F5  |",
+"--------------------------------------------------------------------------"
+]
